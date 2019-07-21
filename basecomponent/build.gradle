@@ -1,0 +1,39 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.jakewharton.butterknife'
+android {
+    defaultConfig {
+        compileSdkVersion rootProject.ext.compileSdkVersion
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildToolsVersion = buildToolsVersion
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //把implementation 用api代替,它是对外部公开的, 所有其他的module就不需要添加该依赖
+    api "com.android.support.constraint:constraint-layout:$rootProject.ext.constraintlayoutVersion"
+    api "com.android.support:appcompat-v7:${appcompatV7Version}"
+    api "com.github.CymChad:BaseRecyclerViewAdapterHelper:${baseadapterVersion}"
+    api "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    api "io.reactivex.rxjava2:rxjava:${rxjava2}"
+    api "io.reactivex.rxjava2:rxandroid:${rxandroidversion}"
+    api "com.squareup.retrofit2:adapter-rxjava2:${adapterRxjavaVersion}" // 必要依赖，和Rxjava结合必须用到，下面会提到
+    api "com.squareup.retrofit2:converter-gson:${converterGsonVersion}" // 必要依赖，解析json字符所用
+    api "com.squareup.okhttp3:logging-interceptor:${loggingInterceptorVersion}"
+
+    //黄油刀
+    api 'com.jakewharton:butterknife:10.1.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+}
