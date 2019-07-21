@@ -50,7 +50,7 @@ ext {
     adapterRxjavaVersion = '2.6.0'
 
     //控制模块是否参与编译
-    isMulitAPK = false
+    isMulitAPK = true
 
 
 }
