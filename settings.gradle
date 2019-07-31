@@ -1,2 +1,2 @@
-include ':app', ':basecomponent', ':logincomponent'
+include ':app', ':basecomponent', ':logincomponent', ':mainmoudle'
 rootProject.name='BaseProject'
