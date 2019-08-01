@@ -1,3 +1,5 @@
 <resources>
     <string name="main_app_name">mainMoudle</string>
+    <string name="main_launch">立即体验</string>
+    <string name="baslib_launch">立即体验</string>
 </resources>
