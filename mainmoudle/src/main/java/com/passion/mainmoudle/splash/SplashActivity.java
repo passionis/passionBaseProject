@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ObjectUtils;
 import com.blankj.utilcode.util.SizeUtils;
 import com.passion.mainmoudle.R;
@@ -17,6 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 /**
  * 欢迎页面
@@ -24,7 +32,7 @@ import java.util.TimerTask;
 public class SplashActivity extends AppCompatActivity {
 
     private List<ImageView> points = new ArrayList<>();
-    private List<Integer> pictures = new ArrayList();
+    private ArrayList pictures = new ArrayList();
     private ViewPager viewPager;
     private LinearLayout pointll;
     private SplashViewPageAdapter adapter;
@@ -44,25 +52,34 @@ public class SplashActivity extends AppCompatActivity {
             viewPager.setCurrentItem(currentPostion);
             points.get(currentPostion).setEnabled(true);
         }
-        Timer timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (currentPostion + 1 < pictures.size()) {
-                            viewPager.setCurrentItem(currentPostion + 1);
-                        } else {
-                            timer.cancel();
-                            launcherBtn.setVisibility(View.VISIBLE);
-                            pointll.setVisibility(View.GONE);
-                        }
-                    }
+//        Timer timer = new Timer();
+//        TimerTask timerTask = new TimerTask() {
+//            @Override
+//            public void run() {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (currentPostion + 1 < pictures.size()) {
+//                            viewPager.setCurrentItem(currentPostion + 1);
+//                        } else {
+//                            timer.cancel();
+//                            launcherBtn.setVisibility(View.VISIBLE);
+//                            pointll.setVisibility(View.GONE);
+//                        }
+//                    }
+//                });
+//            }
+//        };
+//        timer.schedule(timerTask, 2000, 2000);
+
+        Observable.intervalRange(currentPostion, pictures.size(), 2, 2, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aLong -> {
+                    currentPostion = Math.toIntExact(aLong);
+                    viewPager.setCurrentItem(currentPostion);
+                    LogUtils.e(aLong);
+
                 });
-            }
-        };
-        timer.schedule(timerTask, 2000, 2000);
 
     }
 
@@ -75,9 +92,9 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        viewPager = (ViewPager) findViewById(R.id.viewpage);
-        pointll = (LinearLayout) findViewById(R.id.point_ll);
-        launcherBtn = (Button) findViewById(R.id.launch_bt);
+        viewPager = findViewById(R.id.viewpage);
+        pointll =  findViewById(R.id.point_ll);
+        launcherBtn = findViewById(R.id.launch_bt);
         adapter = new SplashViewPageAdapter(pictures, this);
         viewPager.setAdapter(adapter);
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -108,7 +125,7 @@ public class SplashActivity extends AppCompatActivity {
      * 创建并显示小圆点
      */
     private void initPoint() {
-        pictures.forEach(c->{
+        pictures.forEach(c -> {
             ImageView imageView = new ImageView(this);
             imageView.setImageDrawable(getDrawable(R.drawable.main_splash_point));
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(SizeUtils.dp2px(15), SizeUtils.dp2px(15));
